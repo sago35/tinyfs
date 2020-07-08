@@ -10,8 +10,6 @@ import (
 	"time"
 
 	"github.com/bgould/tinyfs"
-
-	"tinygo.org/x/drivers/flash"
 )
 
 const consoleBufLen = 64
@@ -27,7 +25,7 @@ var (
 	console  = machine.UART0
 	readyLED = machine.LED
 
-	flashdev *flash.Device
+	flashdev tinyfs.BlockDevice
 	fs       tinyfs.Filesystem
 
 	currdir = "/"
@@ -59,7 +57,7 @@ const (
 	StateCSI
 )
 
-func RunFor(dev *flash.Device, filesys tinyfs.Filesystem) {
+func RunFor(dev tinyfs.BlockDevice, filesys tinyfs.Filesystem) {
 	time.Sleep(3 * time.Second)
 
 	flashdev = dev
@@ -173,39 +171,40 @@ func dbg(argv []string) {
 }
 
 func lsblk(argv []string) {
-	attrs := flashdev.Attrs()
-	status1, _ := flashdev.ReadStatus()
-	status2, _ := flashdev.ReadStatus2()
-	serialNumber1, _ := flashdev.ReadSerialNumber()
-	fmt.Printf(
-		"\n-------------------------------------\r\n"+
-			" Device Information:  \r\n"+
-			"-------------------------------------\r\n"+
-			" JEDEC ID: %6X\r\n"+
-			" Serial:   %08X\r\n"+
-			" Status 1: %02x\r\n"+
-			" Status 2: %02x\r\n"+
-			" \r\n"+
-			" Max clock speed (MHz): %d\r\n"+
-			" Has Sector Protection: %t\r\n"+
-			" Supports Fast Reads:   %t\r\n"+
-			" Supports QSPI Reads:   %t\r\n"+
-			" Supports QSPI Write:   %t\r\n"+
-			" Write Status Split:    %t\r\n"+
-			" Single Status Byte:    %t\r\n"+
-			"-------------------------------------\r\n\r\n",
-		attrs.JedecID.Uint32(),
-		serialNumber1,
-		status1,
-		status2,
-		attrs.MaxClockSpeedMHz,
-		attrs.HasSectorProtection,
-		attrs.SupportsFastRead,
-		attrs.SupportsQSPI,
-		attrs.SupportsQSPIWrites,
-		attrs.WriteStatusSplit,
-		attrs.SingleStatusByte,
-	)
+	fmt.Printf("lsblk : not implement\r\n")
+	//attrs := flashdev.Attrs()
+	//status1, _ := flashdev.ReadStatus()
+	//status2, _ := flashdev.ReadStatus2()
+	//serialNumber1, _ := flashdev.ReadSerialNumber()
+	//fmt.Printf(
+	//	"\n-------------------------------------\r\n"+
+	//		" Device Information:  \r\n"+
+	//		"-------------------------------------\r\n"+
+	//		" JEDEC ID: %6X\r\n"+
+	//		" Serial:   %08X\r\n"+
+	//		" Status 1: %02x\r\n"+
+	//		" Status 2: %02x\r\n"+
+	//		" \r\n"+
+	//		" Max clock speed (MHz): %d\r\n"+
+	//		" Has Sector Protection: %t\r\n"+
+	//		" Supports Fast Reads:   %t\r\n"+
+	//		" Supports QSPI Reads:   %t\r\n"+
+	//		" Supports QSPI Write:   %t\r\n"+
+	//		" Write Status Split:    %t\r\n"+
+	//		" Single Status Byte:    %t\r\n"+
+	//		"-------------------------------------\r\n\r\n",
+	//	attrs.JedecID.Uint32(),
+	//	serialNumber1,
+	//	status1,
+	//	status2,
+	//	attrs.MaxClockSpeedMHz,
+	//	attrs.HasSectorProtection,
+	//	attrs.SupportsFastRead,
+	//	attrs.SupportsQSPI,
+	//	attrs.SupportsQSPIWrites,
+	//	attrs.WriteStatusSplit,
+	//	attrs.SingleStatusByte,
+	//)
 }
 
 func mount(argv []string) {
