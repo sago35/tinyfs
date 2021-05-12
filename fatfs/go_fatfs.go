@@ -8,6 +8,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"syscall"
 	"time"
 	"unsafe"
 
@@ -274,7 +275,15 @@ func (l *FATFS) OpenFile(path string, flags int) (tinyfs.File, error) {
 		// file
 		file.typ = 0
 		file.hndl = unsafe.Pointer(C.go_fatfs_new_fil())
-		errno = C.f_open(l.fs, (*C.FIL)(file.hndl), cs, C.BYTE(flags))
+		f := flags
+		if flags == syscall.O_RDONLY {
+			f = C.FA_READ
+		} else if (flags & syscall.O_WRONLY) == syscall.O_WRONLY {
+			f = C.FA_WRITE | C.FA_CREATE_ALWAYS
+		} else if (flags & syscall.O_RDWR) == syscall.O_RDWR {
+			f = C.FA_READ | C.FA_WRITE | C.FA_OPEN_ALWAYS
+		}
+		errno = C.f_open(l.fs, (*C.FIL)(file.hndl), cs, C.BYTE(f))
 	}
 
 	// check to make sure f_open/f_opendir didn't produce an error
